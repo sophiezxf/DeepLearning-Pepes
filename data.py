@@ -148,8 +148,8 @@ def get_vae_transformer(img_size=(142, 189), out_size = (64,64)):
     ])
     return transformer
 
-def get_split_vae_dataset(rootdir, ext:str='png', ratio=(0.7, 0.2, 0.1), img_size=(142, 189), patch_size=(128, 128), transform=None):
-    filenames = glob.glob(osp.join(rootdir, '*.{}'.format(ext)))
+def get_split_vae_dataset(rootdir, ext:str='png', filenames=None, ratio=(0.7, 0.2, 0.1), img_size=(142, 189), patch_size=(128, 128), transform=None):
+    filenames = glob.glob(osp.join(rootdir, '*.{}'.format(ext))) if filenames is None else filenames
     random.shuffle(filenames)
     train_cnt = int(len(filenames) * ratio[0])
     val_cnt = int(len(filenames) * ratio[1])

@@ -181,7 +181,7 @@ class _FunctionSepconv(torch.autograd.Function):
 				args=[ n, input.data_ptr(), vertical.data_ptr(), horizontal.data_ptr(), output.data_ptr() ]
 			)
 
-		elif first.is_cuda == False:
+		elif input.is_cuda == False:
 			raise NotImplementedError()
 
 		# end

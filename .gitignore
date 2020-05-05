@@ -3,3 +3,4 @@ weights/
 .ipynb_checkpoints/
 __pycache__/
 .vscode
+*.pytorch

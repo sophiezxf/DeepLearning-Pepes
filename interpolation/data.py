@@ -18,38 +18,24 @@ def load_image(filename):
     return toTensor(Image.open(filename).convert('RGB'))
 
 class YourNameImageDataset(Dataset):
-    def __init__(self, rootdir: str, ext:str = 'png', isPatch=False, img_size=(320, 427), patch_size=(128, 128)):
+    def __init__(self, rootdir: str, ext:str = 'png', filenames = None):
         super(YourNameImageDataset, self).__init__()
         self.rootdir = rootdir
         self.ext = ext
-        self.img_size = img_size
-        self.patch_size = patch_size
-        self.isPatch = isPatch
-        self.max_top = img_size[0] - patch_size[0]
-        self.max_left = img_size[1] - patch_size[1]
-        self.filenames = glob.glob(osp.join(rootdir, '*.{}'.format(ext)))
+        self.filenames = glob.glob(osp.join(rootdir, '*.{}'.format(ext))) if filenames is None else filenames
         self.filenames.sort()
-    
-    def get_patch(self, filename, crop_top, crop_left):
-        return tfs.functional.crop(self.get_image(filename), crop_top, crop_left, *self.patch_size)
 
     def get_image(self, filename):
         return Image.open(filename).convert('RGB')
         
     def __getitem__(self, index):
-        if self.isPatch:
-            random_top, random_left = random.randint(0, self.max_top), random.randint(0, self.max_left)
-            x_frame_1 = toTensor(self.get_patch(self.filenames[index*2], random_top, random_left))
-            x_frame_2 = toTensor(self.get_patch(self.filenames[index*2+2], random_top, random_left))
-            y_frame = toTensor(self.get_patch(self.filenames[index*2+1], random_top, random_left))
-        else:
-            x_frame_1 = toTensor(self.get_image(self.filenames[index*2]))
-            x_frame_2 = toTensor(self.get_image(self.filenames[index*2+2]))
-            y_frame = toTensor(self.get_image(self.filenames[index*2+1]))
+        x_frame_1 = toTensor(self.get_image(self.filenames[index*3]))
+        x_frame_2 = toTensor(self.get_image(self.filenames[index*3+2]))
+        y_frame = toTensor(self.get_image(self.filenames[index*3+1]))
         return (x_frame_1, x_frame_2), y_frame
     
     def __len__(self):
-        return (len(self.filenames) - 1) // 2
+        return (len(self.filenames) - 1) // 3
 
 def draw_box(image, boundaries, delta = 2, color = 0):
     assert(len(boundaries) == 2)
